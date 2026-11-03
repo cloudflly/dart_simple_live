@@ -28,6 +28,15 @@ jobs:
           cd simple_live_app
           flutter pub get
 
+      # 关键步骤：给 flutter_inappwebview 的 cmake 添加屏蔽宏
+      - name: Patch inappwebview cmake to silence coroutine error
+        run: |
+          cd simple_live_app
+          $cmakePath = (Get-ChildItem -Recurse -Filter "CMakeLists.txt" | Where-Object { $_.FullName -match "flutter_inappwebview" }).FullName
+          if ($cmakePath) {
+            Add-Content -Path $cmakePath -Value "add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)"
+          }
+
       - name: Build Windows Release
         run: |
           cd simple_live_app
