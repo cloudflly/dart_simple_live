@@ -18,21 +18,28 @@ jobs:
         with:
           flutter-version: '3.22.3'
 
-      - name: Enable Windows desktop support
-        run: flutter config --enable-windows-desktop
+      - name: Enter simple_live_app & Enable Windows desktop support
+        run: |
+          cd simple_live_app
+          flutter config --enable-windows-desktop
 
       - name: Flutter pub get
-        run: flutter pub get
+        run: |
+          cd simple_live_app
+          flutter pub get
 
       - name: Build Windows Release
-        run: flutter build windows --release
+        run: |
+          cd simple_live_app
+          flutter build windows --release
 
       - name: Compress release folder
         run: |
+          cd simple_live_app
           Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath build/windows/x64/runner/Release/dart_simple_live_windows.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: dart_simple_live-windows
-          path: build/windows/x64/runner/Release/dart_simple_live_windows.zip
+          path: simple_live_app/build/windows/x64/runner/Release/dart_simple_live_windows.zip
