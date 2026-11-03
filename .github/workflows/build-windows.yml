@@ -3,11 +3,12 @@ name: Build Windows dart_simple_live
 on:
   push:
     branches: [ master ]
-  workflow_dispatch: # 支持手动点击触发构建
+  workflow_dispatch:
 
 jobs:
   build-windows:
     runs-on: windows-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -15,25 +16,20 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
-          channel: 'stable'
-          cache: true
+          flutter-version: '3.22.3'
 
-      - name: Enable Windows desktop
+      - name: Enable Windows desktop support
         run: flutter config --enable-windows-desktop
 
-      - name: Get dependencies
+      - name: Flutter pub get
         run: flutter pub get
 
       - name: Build Windows Release
         run: flutter build windows --release
 
-      - name: Zip Release output
-        uses: thedoctor0/zip-release@0.7.5
-        with:
-          type: 'zip'
-          directory: build/windows/x64/runner/Release
-          filename: dart_simple_live_windows.zip
+      - name: Compress release folder
+        run: |
+          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath build/windows/x64/runner/Release/dart_simple_live_windows.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
