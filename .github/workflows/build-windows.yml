@@ -13,10 +13,10 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Flutter 3.24.0
+      - name: Setup Flutter 3.32.0
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.32.0'
 
       - name: Enter simple_live_app & Enable Windows desktop support
         run: |
