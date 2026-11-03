@@ -7,39 +7,40 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-2022@20240917.1.0
-    timeout-minutes: 30
+    runs-on: windows-2022
+    timeout-minutes: 45
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Flutter 3.47.9
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.47.9'
+          channel: stable
 
-      - name: Enter simple_live_app & Enable Windows desktop support
-        run: |
-          cd simple_live_app
-          flutter config --enable-windows-desktop
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
 
       - name: Flutter pub get
-        run: |
-          cd simple_live_app
-          flutter pub get
+        working-directory: simple_live_app
+        run: flutter pub get
 
       - name: Build Windows Release
-        run: |
-          cd simple_live_app
-          flutter build windows --release
+        working-directory: simple_live_app
+        run: flutter build windows --release
 
       - name: Compress release folder
+        shell: pwsh
         run: |
-          cd simple_live_app
-          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath build/windows/x64/runner/Release/dart_simple_live_windows.zip
+          Compress-Archive `
+            -Path "simple_live_app/build/windows/x64/runner/Release/*" `
+            -DestinationPath "dart_simple_live_windows.zip"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: dart_simple_live-windows
-          path: simple_live_app/build/windows/x64/runner/Release/dart_simple_live_windows.zip
+          path: dart_simple_live_windows.zip
+          if-no-files-found: error
